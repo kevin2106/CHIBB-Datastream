@@ -33,14 +33,9 @@ client.on('connect', function () {
   client.on('message', function (topic, message) {
     const object = JSON.parse(message);
     _.forEach(object.readings, function(value, key) {
-      db.insert({
-            "type" : value.type,
-            "reading" : value.reading,
-            "unit" : value.unit,
-            "timestamp" : value.timestamp,
-            "sensorId" : value.type + 1
-          }
-        )
+      var values = {"Timestamp": value.timestamp,
+                     "Value":   value.reading};
+      db.update({ "Type" : value.type }, { $push: { "Readings" : values }})
         .catch(err => {
           console.error(err);
         });
